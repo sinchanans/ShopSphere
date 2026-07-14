@@ -6,7 +6,13 @@ from app.extensions import db, migrate, jwt, bcrypt
 from app.routes import main_bp, auth_bp
 
 from app import models
-
+from app.routes import (
+    main_bp,
+    auth_bp,
+    category_bp,
+    product_bp,
+    cart_bp
+)
 
 def create_app():
 
@@ -20,6 +26,9 @@ def create_app():
     bcrypt.init_app(app)
 
     app.register_blueprint(main_bp)
-    app.register_blueprint(auth_bp)
+    app.register_blueprint(auth_bp)   
+    app.register_blueprint(category_bp)
+    app.register_blueprint(product_bp)
+    app.register_blueprint(cart_bp)
 
     return app
