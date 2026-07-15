@@ -11,7 +11,8 @@ from app.routes import (
     auth_bp,
     category_bp,
     product_bp,
-    cart_bp
+    cart_bp,
+    order_bp
 )
 
 def create_app():
@@ -30,5 +31,6 @@ def create_app():
     app.register_blueprint(category_bp)
     app.register_blueprint(product_bp)
     app.register_blueprint(cart_bp)
+    app.register_blueprint(order_bp)
 
     return app

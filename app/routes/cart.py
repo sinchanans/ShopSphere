@@ -45,3 +45,73 @@ def add_to_cart():
     return jsonify({
         "message": "Product added to cart"
     }), 201
+@cart_bp.route("", methods=["GET"])
+@jwt_required()
+def get_cart():
+
+    user_id = int(get_jwt_identity())
+
+    cart_items = Cart.query.filter_by(user_id=user_id).all()
+
+    result = []
+
+    total = 0
+
+    for item in cart_items:
+
+        subtotal = item.product.price * item.quantity
+
+        total += subtotal
+
+        result.append({
+            "cart_id": item.id,
+            "product_id": item.product.id,
+            "name": item.product.name,
+            "price": item.product.price,
+            "quantity": item.quantity,
+            "subtotal": subtotal
+        })
+
+    return jsonify({
+        "items": result,
+        "grand_total": total
+    }), 200
+
+@cart_bp.route("/<int:id>", methods=["PUT"])
+@jwt_required()
+def update_cart(id):
+
+    cart = Cart.query.get(id)
+
+    if not cart:
+        return jsonify({
+            "message": "Cart item not found"
+        }),404
+
+    data = request.get_json()
+
+    cart.quantity = data["quantity"]
+
+    db.session.commit()
+
+    return jsonify({
+        "message":"Cart updated successfully"
+    }),200
+@cart_bp.route("/<int:id>", methods=["DELETE"])
+@jwt_required()
+def delete_cart(id):
+
+    cart = Cart.query.get(id)
+
+    if not cart:
+        return jsonify({
+            "message":"Cart item not found"
+        }),404
+
+    db.session.delete(cart)
+
+    db.session.commit()
+
+    return jsonify({
+        "message":"Item removed from cart"
+    }),200
